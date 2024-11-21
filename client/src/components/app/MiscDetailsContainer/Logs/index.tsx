@@ -1,15 +1,18 @@
 import './index.css';
 
+import { ChevronDown, ChevronUp } from 'lucide-react';
 import { useAppDispatch, useAppSelector } from "@/redux/hooks";
+import { useEffect, useRef, useState } from "react";
 
 import { Button } from "@/components/ui/button";
 import { CotainerSelector } from "./ContainerSelector";
 import { DebouncedInput } from "@/components/app/Common/DeboucedInput";
 import { DownloadIcon } from '@radix-ui/react-icons';
+import { PodSocketResponse } from '@/types';
 import { RootState } from "@/redux/store";
+import { SearchAddon } from '@xterm/addon-search';
 import { SocketLogs } from "./SocketLogs";
 import { setIsFollowingLogs } from "@/data/Workloads/Pods/PodLogsSlice";
-import { useState } from "react";
 
 type PodLogsProps = {
   namespace: string;
@@ -18,17 +21,25 @@ type PodLogsProps = {
   clusterName: string;
 }
 
+type SearchDirection = 'next' | 'previous';
+
 const PodLogs = ({ namespace, name, configName, clusterName }: PodLogsProps) => {
   const [podLogSearch, setPodLogSearch] = useState('');
+  const podLogSearchRef = useRef(podLogSearch);
   const dispatch = useAppDispatch();
   const {
     podDetails
   } = useAppSelector((state: RootState) => state.podDetails);
-  const {
-    logs,
-    selectedContainer,
-    isFollowingLogs
-  } = useAppSelector((state: RootState) => state.podLogs);
+  // const {
+  //   // logs,
+  //   // selectedContainer,
+  // } = useAppSelector((state: RootState) => state.podLogs);
+  const [selectedContainer, setSelectedContainer] = useState('');
+  const [logs, setLogs] = useState<PodSocketResponse[]>([]);
+  const nextSearchBtnRef = useRef<HTMLButtonElement>(null);
+  const previousSearchBtnRef = useRef<HTMLButtonElement>(null);
+  const searchAddonRef = useRef<SearchAddon | null>(null);
+
 
   const downloadLogs = () => {
     const a = document.createElement('a');
@@ -46,23 +57,37 @@ const PodLogs = ({ namespace, name, configName, clusterName }: PodLogsProps) => 
     a.click();
   };
 
+  const updateLogs = (currentLog: PodSocketResponse) => {
+    // console.log(currentLog)
+    // const temp = [...logs];
+    setLogs((prevLogs) => [...prevLogs, currentLog]);
+    // setLogs(oldArray => [...oldArray,currentLog] );
+    // console.log([...temp, currentLog])
+  };
+  // console.log('logs', ...logs  )
   return (
     <div className="logs flex-col md:flex border rounded-lg">
       <div className="flex items-start justify-between py-4 flex-row items-center h-10 border-b bg-muted/50">
-        <div className="mx-2 basis-9/12">
+        <div className="mx-2 flex basis-9/12">
           <DebouncedInput
             placeholder="Search... (/)"
             value={podLogSearch}
-            onChange={(value) => setPodLogSearch(String(value))}
+            onChange={(value) => {setPodLogSearch(String(value)), podLogSearchRef.current = String(value)}}
             className="h-8 font-medium text-xs shadow-none"
             debounce={0}
           />
+          <Button ref={nextSearchBtnRef} variant="outline" size="icon" onClick={()=> searchAddonRef.current?.findNext(podLogSearch)}>
+            <ChevronDown />
+          </Button>
+          <Button ref={previousSearchBtnRef} variant="outline" size="icon" onClick={()=> searchAddonRef.current?.findPrevious(podLogSearch)}>
+            <ChevronUp />
+          </Button>
         </div>
         <div className="ml-auto flex w-full space-x-2 sm:justify-end">
 
-          <CotainerSelector podDetailsSpec={podDetails.spec} selectedContainer={selectedContainer} />
+          <CotainerSelector podDetailsSpec={podDetails.spec} selectedContainer={selectedContainer} setSelectedContainer={setSelectedContainer} />
           <div className="flex justify-end pr-3">
-            <Button
+            {/* <Button
               variant="outline"
               role="combobox"
               aria-label="Containers"
@@ -70,7 +95,7 @@ const PodLogs = ({ namespace, name, configName, clusterName }: PodLogsProps) => 
               onClick={() => dispatch(setIsFollowingLogs(!isFollowingLogs))}
             >
               {isFollowingLogs ? 'Stop Following' : 'Follow Log'}
-            </Button>
+            </Button> */}
             <Button
               variant="outline"
               role="combobox"
@@ -87,11 +112,11 @@ const PodLogs = ({ namespace, name, configName, clusterName }: PodLogsProps) => 
         containerName={selectedContainer}
         namespace={namespace}
         pod={name}
-        podLogSearch={podLogSearch}
-        isFollowingLogs={isFollowingLogs}
         configName={configName}
         clusterName={clusterName}
         podDetailsSpec={podDetails.spec}
+        updateLogs={updateLogs}
+        searchAddonRef={searchAddonRef}
       />
     </div>
   );

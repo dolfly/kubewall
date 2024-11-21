@@ -22,7 +22,11 @@ const useEventSource = ({url, sendMessage} : KwEventSource) => {
       // sendMessage(eventData)
 
       try {
+        // console.log(event.data)
         const eventData = JSON.parse(event.data);
+        if(Array.isArray(eventData)) {
+          debugger
+        }
         sendMessage(eventData);
       } catch {
         // const eventData = JSON.parse(event.data);
