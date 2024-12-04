@@ -1,13 +1,13 @@
 import './index.css';
 
-import { ChevronDown, ChevronUp } from 'lucide-react';
+import { ChevronDownIcon, ChevronUpIcon, DownloadIcon } from '@radix-ui/react-icons';
+// import { ChevronDown, ChevronUp } from 'lucide-react';
 import { useAppDispatch, useAppSelector } from "@/redux/hooks";
 import { useEffect, useRef, useState } from "react";
 
 import { Button } from "@/components/ui/button";
 import { CotainerSelector } from "./ContainerSelector";
 import { DebouncedInput } from "@/components/app/Common/DeboucedInput";
-import { DownloadIcon } from '@radix-ui/react-icons';
 import { PodSocketResponse } from '@/types';
 import { RootState } from "@/redux/store";
 import { SearchAddon } from '@xterm/addon-search';
@@ -72,15 +72,24 @@ const PodLogs = ({ namespace, name, configName, clusterName }: PodLogsProps) => 
           <DebouncedInput
             placeholder="Search... (/)"
             value={podLogSearch}
-            onChange={(value) => {setPodLogSearch(String(value)), podLogSearchRef.current = String(value)}}
+            onChange={(value) => { setPodLogSearch(String(value)), podLogSearchRef.current = String(value) }}
             className="h-8 font-medium text-xs shadow-none"
             debounce={0}
           />
-          <Button ref={nextSearchBtnRef} variant="outline" size="icon" onClick={()=> searchAddonRef.current?.findNext(podLogSearch)}>
-            <ChevronDown />
+          <Button
+            ref={nextSearchBtnRef}
+            variant="outline"
+            className="flex-1 text-xs shadow-none h-8 px-2 py-2 mx-1"
+            onClick={() =>
+              searchAddonRef.current?.findNext(podLogSearch)}>
+            <ChevronDownIcon className="h-3.5 w-3.5 cursor-pointer"/>
           </Button>
-          <Button ref={previousSearchBtnRef} variant="outline" size="icon" onClick={()=> searchAddonRef.current?.findPrevious(podLogSearch)}>
-            <ChevronUp />
+          <Button
+            ref={previousSearchBtnRef}
+            variant="outline"
+            className="flex-1 text-xs shadow-none h-8 px-2 py-2"
+            onClick={() => searchAddonRef.current?.findPrevious(podLogSearch)}>
+            <ChevronUpIcon className="h-3.5 w-3.5 cursor-pointer"/>
           </Button>
         </div>
         <div className="ml-auto flex w-full space-x-2 sm:justify-end">

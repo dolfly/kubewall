@@ -1,15 +1,17 @@
+import { Link, useNavigate } from "@tanstack/react-router";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useDetailsWrapper, useFetchDataForDetails } from "../Hooks/Details";
 
 import { CaretLeftIcon } from "@radix-ui/react-icons";
 import { Events } from "../../Details/Events";
 import FourOFourError from "../../Errors/404Error";
-import { Link } from "@tanstack/react-router";
 import { Loader } from "../../Loader";
 import { Overview } from "../../Details/Overview";
 import { PODS_ENDPOINT } from "@/constants";
 import { PodLogs } from "../../MiscDetailsContainer";
 import { RootState } from "@/redux/store";
+import { Row } from "@tanstack/react-table";
+import { TableDelete } from "../../Table/TableDelete";
 import { YamlEditor } from "../../Details/YamlEditor";
 import { clearLogs } from "@/data/Workloads/Pods/PodLogsSlice";
 import { kwDetails } from "@/routes";
@@ -20,6 +22,7 @@ import { useEffect } from "react";
 
 const KwDetails = () => {
   const dispatch = useDispatch();
+  const navigate = useNavigate();
   const { config } = kwDetails.useParams();
   const { cluster, resourcekind, resourcename, group = '', kind = '', resource = '', version = '', namespace } = kwDetails.useSearch();
   const { podDetails } = useAppSelector((state: RootState) => state.podDetails);
@@ -51,6 +54,18 @@ const KwDetails = () => {
     return new URLSearchParams(qp).toString();
   };
 
+  const selectedRows = [
+    {
+      original: {
+        name: resourcename,
+        namespace
+      }
+    }
+  ] as Row<any>[];
+
+  const redirectToListPage = () => {
+    navigate({ to: `/${config}/list?${getListPageQueryparams()}` });
+  }
   return (
     <>
       <span className="text-xs text-blue-600 dark:text-blue-500 hover:underline">
@@ -69,7 +84,9 @@ const KwDetails = () => {
                     {resourceData?.subHeading}
                   </h2>
                 </div>
-
+                <div>
+                  <TableDelete selectedRows={selectedRows} postDeleteCallback={redirectToListPage} />
+                </div>
               </div>
               {resourceData &&
                 <Tabs defaultValue='overview'>

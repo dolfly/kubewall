@@ -1,15 +1,25 @@
+import type * as MonacoTypes from "monaco-editor/esm/vs/editor/editor.api";
+import * as monaco from 'monaco-editor';
+
+import { Monaco, loader } from '@monaco-editor/react';
 import { createEventStreamQueryObject, getEventStreamUrl, getSystemTheme } from '@/utils';
-import { memo, useCallback, useEffect, useState } from 'react';
+import { memo, useCallback, useEffect, useRef, useState } from 'react';
 import { resetUpdateYaml, updateYaml } from '@/data/Yaml/YamlUpdateSlice';
 import { useAppDispatch, useAppSelector } from '@/redux/hooks';
 
 import { Button } from '@/components/ui/button';
-import Editor from '@monaco-editor/react';
+import { CodeEditor } from './editor';
+// import Editor from '@monaco-editor/react';
 import { Loader } from '../../Loader';
 import { SaveIcon } from "lucide-react";
+import { configureMonacoYaml } from "monaco-yaml";
 import { toast } from "sonner";
 import { updateYamlDetails } from '@/data/Yaml/YamlSlice';
 import { useEventSource } from '../../Common/Hooks/EventSource';
+import yamlWorker from './yaml.worker.js?worker'
+
+// there is a global monaco variable (TODO get the correct TS type)
+// declare var monaco: Monaco;
 
 type EditorProps = {
   name: string;
@@ -38,7 +48,8 @@ const YamlEditor = memo(function ({ instanceType, name, namespace, clusterName, 
     config: configName,
     cluster: clusterName
   }).toString();
-  
+  const editorRef = useRef(null);
+  const editorInstance = useRef(null);
   const [value, setValue] = useState('');
   const onChange = useCallback((val = '') => {
     setYamlUpdated(true);
@@ -92,7 +103,6 @@ const YamlEditor = memo(function ({ instanceType, name, namespace, clusterName, 
     sendMessage
   });
 
-
   return (
     <>
       {
@@ -119,8 +129,14 @@ const YamlEditor = memo(function ({ instanceType, name, namespace, clusterName, 
                 <span className='text-xs'>Save</span>
               </Button>
             }
-
-            <Editor
+            {/* <div id="editor" ref={editorRef} className='border rounded-lg h-screen' /> */}
+            <CodeEditor
+              text={value}
+              language='yaml'
+              onChange={onChange}
+              
+            />
+            {/* <Editor
               className='border rounded-lg h-screen'
               value={value}
               defaultLanguage='yaml'
@@ -131,7 +147,7 @@ const YamlEditor = memo(function ({ instanceType, name, namespace, clusterName, 
                   enabled: false,
                 },
               }}
-            />
+            /> */}
           </div>
 
       }

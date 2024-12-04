@@ -1,4 +1,4 @@
-import { ClusterDetails, HeaderList } from "@/types";
+import { ClusterDetails, CommonSearchParams, HeaderList } from "@/types";
 import { defaultSkeletonRow, getEventStreamUrl } from "@/utils";
 
 import { ActionCreatorWithPayload } from "@reduxjs/toolkit";

@@ -21,7 +21,7 @@ type LogMessage struct {
 }
 
 func (h *PodsHandler) fetchLogs(ctx context.Context, namespace, podName, containerName string, logsChannel chan<- LogMessage) {
-	i := int64(100)
+	i := int64(10)
 	podLogOptions := &v1.PodLogOptions{
 		Container:  containerName,
 		Timestamps: true,
