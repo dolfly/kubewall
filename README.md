@@ -5,9 +5,9 @@
 | [Releases](https://github.com/kubewall/kubewall/releases)
 | [Source Code](https://github.com/kubewall/kubewall)
 
-A single binary to manage your multiple kubernetes clusters. Supports multiple AI providers (OpenAI / Claude 4 / Gemini / DeepSeek / OpenRouter / Ollama / Qwen / LMStudio ). To manage multiple clusters.
+**kubewall** is a Open-Source, Single-Binary Kubernetes Dashboard with Multi-Cluster Management & AI Integration.
 
-**kubewall** provides a simple and rich real time interface to manage and investigate your clusters.
+It provides a simple and rich realtime interface to manage and investigate your clusters.
 
 
 **Key features of kubewall include:**
@@ -17,7 +17,7 @@ A single binary to manage your multiple kubernetes clusters. Supports multiple A
 * **Real-time cluster monitoring:** kubewall offers a rich, real-time interface that displays the current state of your Kubernetes clusters, allowing you to quickly identify and address issues.
 * **Cluster management:** kubewall enables you to manage multiple Kubernetes clusters from a single pane of glass, reducing the overhead of switching between different tools and interfaces.
 * **Detailed cluster insights:** kubewall provides comprehensive insights into your Kubernetes clusters, manifest info of your pods, services, config and others.
-* **AI-powered**: kubewall provides AI support to analyze cluster data, optimize configurations, and assist with troubleshooting — making kubernetes management smarter and faster.
+* **AI-powered**: kubewall provides AI support to analyze cluster data, optimize configurations, and assist with troubleshooting — making kubernetes management smarter and faster. (OpenAI / Claude 4 / Gemini / DeepSeek / OpenRouter / Ollama / Qwen / LMStudio)
 
 # :movie_camera: Intro
 
